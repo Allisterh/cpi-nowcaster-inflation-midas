@@ -1,0 +1,29 @@
+# The virtual environment - large, recreated from requirements.txt
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Data files - we fetch fresh data daily
+data/*.csv
+data/*.json
+
+# Environment variables - contains your secret API key
+.env
+
+# IDE settings
+.vscode/
+.idea/
+
+# Trained model files - large, we store training code instead
+*.pkl
+*.joblib
+
+# Jupyter notebooks
+*.ipynb
+
+# OS files
+.DS_Store
+Thumbs.db
