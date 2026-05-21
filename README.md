@@ -2,6 +2,8 @@
 
 Real-time nowcasting model for US Consumer Price Index (CPI) inflation.
 
+[![Live Dashboard](https://img.shields.io/badge/Live-Dashboard-green?style=for-the-badge&logo=streamlit)](https://cpi-nowcaster-1.streamlit.app)
+
 ## What This Does
 
 CPI stands for Consumer Price Index. It is a key economic metric that measures the average change over time in the prices paid by consumers for a representative "basket" of goods and services. It is the primary tool used by governments and economists to track inflation and evaluate the cost of living. Official CPI data is released monthly with a 2-week delay. Markets need to know
