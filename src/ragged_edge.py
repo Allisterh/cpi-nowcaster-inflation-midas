@@ -23,6 +23,10 @@ PUBLICATION_LAG = {
     "INDPRO": 1,         # Industrial Production: mid next month
     "PAYEMS": 1,         # Nonfarm Payrolls: ~1 week into next month
     "RSAFS": 1,          # Retail Sales: mid next month
+    "PPIACO": 1,         # PPI All Commodities: mid next month
+    "HOUST": 1,          # Housing Starts: mid next month
+    "MICH": 1,           # Michigan Inflation Expectations: mid next month
+    "AHETPI": 1,         # Avg Hourly Earnings: released with payrolls
 }
 
 

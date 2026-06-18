@@ -11,7 +11,6 @@ from datetime import datetime
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import warnings
-warnings.filterwarnings("ignore")
 
 
 def create_midas_weights(num_lags=22, degree=2):
@@ -79,7 +78,7 @@ def prepare_training_data(ragged_df, labels, daily_cols=None):
         feature_names (list): Names of all features.
     """
     if daily_cols is None:
-        daily_cols = ["T5YIE", "DTWEXBGS", "DCOILWTICO"]
+        daily_cols = ["T10YIE", "T5YIE", "DTWEXBGS", "DCOILWTICO", "DHHNGSP"]
     
     # Create a copy to avoid modifying the original
     df = ragged_df.copy()
@@ -90,22 +89,22 @@ def prepare_training_data(ragged_df, labels, daily_cols=None):
     df["CPI_lag3"] = df["CPIAUCSL"].shift(3)
     
     # Calculate month-over-month changes for monthly data
-    for col in ["UNRATE", "INDPRO", "PAYEMS", "RSAFS"]:
+    for col in ["UNRATE", "INDPRO", "PAYEMS", "RSAFS", "PPIACO", "HOUST", "AHETPI"]:
         if col in df.columns:
             df[f"{col}_mom"] = df[col].pct_change() * 100
-    
+
     # Use the current daily values as features
     # These represent the latest market snapshot
-    current_features = [c for c in df.columns if c.endswith("_current") or 
-                                                     c.endswith("_5d_avg") or 
+    current_features = [c for c in df.columns if c.endswith("_current") or
+                                                     c.endswith("_5d_avg") or
                                                      c.endswith("_21d_ago")]
-    
-    # Base monthly features
-    monthly_features = ["UNRATE", "INDPRO", "PAYEMS", "RSAFS"]
-    mom_features = [f"{col}_mom" for col in monthly_features]
-    
+
+    # Base monthly features (MICH is already a rate — no MoM transform)
+    monthly_features = ["UNRATE", "INDPRO", "PAYEMS", "RSAFS", "PPIACO", "HOUST", "MICH", "AHETPI"]
+    mom_features = [f"{col}_mom" for col in ["UNRATE", "INDPRO", "PAYEMS", "RSAFS", "PPIACO", "HOUST", "AHETPI"]]
+
     # Daily end-of-month features
-    daily_features = ["T5YIE", "DTWEXBGS", "DCOILWTICO"]
+    daily_features = ["T10YIE", "T5YIE", "DTWEXBGS", "DCOILWTICO", "DHHNGSP"]
     
     # Combine all features
     feature_names = (["CPI_lag1", "CPI_lag2", "CPI_lag3"] + 
@@ -127,9 +126,24 @@ def prepare_training_data(ragged_df, labels, daily_cols=None):
     X = X[valid]
     y = y[valid]
     
-    # Fill remaining NaN features with column median
-    X = X.fillna(X.median())
-    
+    # Drop columns where more than 50% of values are NaN — they carry no signal.
+    # This can happen when an optional series was unavailable at fetch time.
+    nan_frac = X.isna().mean()
+    mostly_missing = nan_frac[nan_frac > 0.5].index.tolist()
+    if mostly_missing:
+        print(f"  [WARN] Dropping features with >50% NaN: {mostly_missing}")
+        X = X.drop(columns=mostly_missing)
+        feature_names = [f for f in feature_names if f not in mostly_missing]
+
+    # Fill any remaining sparse NaNs with zero.
+    # median() on an all-NaN column returns NaN and fills nothing — zero is safer.
+    X = X.fillna(0)
+
+    if X.empty or len(X) < 12:
+        raise RuntimeError(
+            f"Not enough training rows after cleaning: {len(X)} (need at least 12)."
+        )
+
     return X, y, feature_names
 
 
@@ -174,7 +188,9 @@ def expanding_window_cv(X, y, model=None, min_train=24):
         X_test = X.iloc[i:i+1]
         y_test = y.iloc[i:i+1]
         
-        model.fit(X_train, y_train)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
+            model.fit(X_train, y_train)
         pred = model.predict(X_test)[0]
         
         predictions.append({
@@ -225,7 +241,9 @@ def train_final_model(X, y):
         random_state=42
     )
     
-    model.fit(X, y)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
+        model.fit(X, y)
     return model
 
 

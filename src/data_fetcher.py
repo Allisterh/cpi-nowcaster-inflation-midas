@@ -35,13 +35,18 @@ def fetch_data(start_date="2010-01-01"):
     """
     fred = get_fred_client()
 
-    # Monthly macroeconomic indicators
+    # Series marked True are required — a fetch failure raises immediately.
+    # Series marked False are optional — logged and skipped if unavailable.
     monthly_series = {
-        "CPIAUCSL": "Consumer Price Index (All Urban Consumers)",
-        "UNRATE": "Civilian Unemployment Rate",
-        "INDPRO": "Industrial Production Index",
-        "PAYEMS": "All Employees: Total Nonfarm Payrolls",
-        "RSAFS": "Advance Retail Sales: Retail Trade",
+        "CPIAUCSL": (True,  "Consumer Price Index (All Urban Consumers)"),
+        "UNRATE":   (True,  "Civilian Unemployment Rate"),
+        "INDPRO":   (True,  "Industrial Production Index"),
+        "PAYEMS":   (True,  "All Employees: Total Nonfarm Payrolls"),
+        "RSAFS":    (False, "Advance Retail Sales: Retail Trade"),
+        "PPIACO":   (False, "Producer Price Index: All Commodities"),
+        "HOUST":    (False, "Housing Starts: Total New Privately Owned"),
+        "MICH":     (False, "U of Michigan: 1-Year Inflation Expectation"),
+        "AHETPI":   (False, "Average Hourly Earnings: Total Private"),
     }
 
     print("=" * 50)
@@ -49,23 +54,31 @@ def fetch_data(start_date="2010-01-01"):
     print("=" * 50)
 
     monthly_data = {}
-    for series_id, description in monthly_series.items():
+    for series_id, (required, description) in monthly_series.items():
         try:
             series = fred.get_series(series_id, observation_start=start_date)
             monthly_data[series_id] = series
             print(f"  [OK] {series_id}: {description}")
         except Exception as e:
-            print(f"  [FAIL] {series_id}: {e}")
+            if required:
+                raise RuntimeError(f"Failed to fetch required series {series_id}: {e}") from e
+            print(f"  [SKIP] {series_id}: {e}")
 
     df_monthly = pd.DataFrame(monthly_data)
     df_monthly.index = pd.to_datetime(df_monthly.index)
     df_monthly = df_monthly.resample("MS").last()
 
-    # Daily financial indicators
+    if df_monthly.empty:
+        raise RuntimeError("Monthly DataFrame is empty after fetch — no data was returned.")
+    if "CPIAUCSL" not in df_monthly.columns or df_monthly["CPIAUCSL"].dropna().empty:
+        raise RuntimeError("CPIAUCSL (CPI target) has no data — cannot train model.")
+
     daily_series = {
-        "T5YIE": "5-Year Breakeven Inflation Rate",
-        "DTWEXBGS": "Trade Weighted U.S. Dollar Index: Broad",
-        "DCOILWTICO": "Crude Oil: West Texas Intermediate (WTI)",
+        "T10YIE":     (True,  "10-Year Breakeven Inflation Rate"),
+        "T5YIE":      (False, "5-Year Breakeven Inflation Rate"),
+        "DTWEXBGS":   (True,  "Trade Weighted U.S. Dollar Index: Broad"),
+        "DCOILWTICO": (True,  "Crude Oil: West Texas Intermediate (WTI)"),
+        "DHHNGSP":    (False, "Henry Hub Natural Gas Spot Price"),
     }
 
     print("\n" + "=" * 50)
@@ -73,16 +86,21 @@ def fetch_data(start_date="2010-01-01"):
     print("=" * 50)
 
     daily_data = {}
-    for series_id, description in daily_series.items():
+    for series_id, (required, description) in daily_series.items():
         try:
             series = fred.get_series(series_id, observation_start=start_date)
             daily_data[series_id] = series
             print(f"  [OK] {series_id}: {description}")
         except Exception as e:
-            print(f"  [FAIL] {series_id}: {e}")
+            if required:
+                raise RuntimeError(f"Failed to fetch required series {series_id}: {e}") from e
+            print(f"  [SKIP] {series_id}: {e}")
 
     df_daily = pd.DataFrame(daily_data)
     df_daily.index = pd.to_datetime(df_daily.index)
+
+    if df_daily.empty:
+        raise RuntimeError("Daily DataFrame is empty after fetch — no data was returned.")
 
     print("\n" + "=" * 50)
     print("DATA FETCH COMPLETE")

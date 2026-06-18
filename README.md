@@ -32,8 +32,31 @@ cpi-nowcaster/
 
 ## Data Sources
 
-- **FRED (Federal Reserve Economic Data)**: CPI, unemployment, industrial production, payrolls, retail sales
-- **Daily financial indicators**: 5-Year breakeven inflation rate, trade-weighted dollar index, WTI crude oil
+All data is fetched from **FRED (Federal Reserve Economic Data)**.
+
+**Monthly indicators**
+
+| Series | Description |
+|---|---|
+| `CPIAUCSL` | Consumer Price Index (target variable) |
+| `UNRATE` | Civilian Unemployment Rate |
+| `INDPRO` | Industrial Production Index |
+| `PAYEMS` | Nonfarm Payrolls |
+| `RSAFS` | Advance Retail Sales |
+| `PPIACO` | Producer Price Index: All Commodities (upstream price pressure) |
+| `HOUST` | Housing Starts (forward indicator for shelter CPI, ~36% of basket) |
+| `MICH` | U of Michigan 1-Year Inflation Expectation |
+| `AHETPI` | Average Hourly Earnings: Total Private (wage-push pressure) |
+
+**Daily indicators**
+
+| Series | Description |
+|---|---|
+| `T10YIE` | 10-Year Breakeven Inflation Rate (market CPI expectation) |
+| `T5YIE` | 5-Year Breakeven Inflation Rate |
+| `DTWEXBGS` | Trade-Weighted U.S. Dollar Index: Broad |
+| `DCOILWTICO` | WTI Crude Oil Price |
+| `DHHNGSP` | Henry Hub Natural Gas Spot Price |
 
 ## Setup
 
