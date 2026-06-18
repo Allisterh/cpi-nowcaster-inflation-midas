@@ -16,9 +16,8 @@ st.set_page_config(
 )
 
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Quantico:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Quantico:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 /* ---- RESET & BASE ---- */
 #MainMenu, footer, header { visibility: hidden; }
 
@@ -50,7 +49,12 @@ st.markdown("""
 }
 
 /* ---- TYPOGRAPHY ---- */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6,
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4 {
     font-family: 'Quantico', sans-serif !important;
     color: var(--text-heading) !important;
     font-weight: 700 !important;
