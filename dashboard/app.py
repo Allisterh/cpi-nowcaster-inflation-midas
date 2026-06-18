@@ -62,7 +62,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 p, span, div, li, a {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ---- CARD ---- */
@@ -111,7 +111,7 @@ p, span, div, li, a {
 }
 
 .nav-title {
-    font-family: 'Quantico', sans-serif;
+    font-family: 'Quantico', sans-serif !important;
     font-weight: 700;
     font-size: 1.1rem;
     color: #F0F0F0;
@@ -142,7 +142,7 @@ p, span, div, li, a {
 
 /* ---- HERO ---- */
 .hero-metric {
-    font-family: 'Quantico', sans-serif;
+    font-family: 'Quantico', sans-serif !important;
     font-weight: 700;
     font-size: 5rem;
     color: #BBF351;
@@ -161,7 +161,7 @@ p, span, div, li, a {
 
 /* ---- STAT ---- */
 .stat-value {
-    font-family: 'Quantico', sans-serif;
+    font-family: 'Quantico', sans-serif !important;
     font-weight: 700;
     font-size: 2rem;
     color: #BBF351;
@@ -201,7 +201,7 @@ p, span, div, li, a {
 
 /* ---- SECTION TITLE ---- */
 .section-title {
-    font-family: 'Quantico', sans-serif;
+    font-family: 'Quantico', sans-serif !important;
     font-weight: 700;
     font-size: 1.1rem;
     color: #F0F0F0;
