@@ -1,34 +1,34 @@
 {
-  "date": "2026-06-18",
-  "nowcast": 4.17,
+  "date": "2026-06-19",
+  "nowcast": 4.25,
   "latest_actual": 4.27,
   "rmse_historical": 0.57,
   "mae_historical": 0.4,
   "top_features": [
     {
-      "feature": "CPI_lag1",
-      "importance": 0.4281098246574402
+      "feature": "MICH",
+      "importance": 0.44747859239578247
     },
     {
       "feature": "T5YIE",
-      "importance": 0.2673245668411255
+      "importance": 0.11725883930921555
     },
     {
-      "feature": "RSAFS",
-      "importance": 0.06257312744855881
+      "feature": "HOUST",
+      "importance": 0.08727294206619263
     },
     {
-      "feature": "PAYEMS",
-      "importance": 0.05995863303542137
+      "feature": "CPI_lag1",
+      "importance": 0.06915625184774399
     },
     {
-      "feature": "UNRATE",
-      "importance": 0.046290021389722824
+      "feature": "PAYEMS_mom",
+      "importance": 0.05156490579247475
     }
   ],
   "data_available": {
-    "monthly_series": 5,
-    "daily_series": 3,
+    "monthly_series": 9,
+    "daily_series": 5,
     "training_samples": 184
   }
 }
